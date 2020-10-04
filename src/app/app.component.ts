@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'shopper';
+
+  loadedFeature = 'recipe';
+  
+  onNavigate(selectedaTab: string){
+    console.log(selectedaTab);
+    this.loadedFeature= selectedaTab;
+  }
+
 }
