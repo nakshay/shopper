@@ -9,8 +9,6 @@ import { RecipeService } from '../services/recipe.service';
   styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent implements OnInit {
-
-  @Output() recipeWasSelected = new EventEmitter<Recipe>();
   recipes : Recipe[] = []; 
 
   constructor(private recipeService : RecipeService,
