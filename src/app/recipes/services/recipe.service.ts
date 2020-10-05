@@ -19,7 +19,7 @@ export class RecipeService {
       new Ingredient("French Fries",10)
     ])
   ];
-   
+  
   constructor() { }
 
   getRecipes() {
