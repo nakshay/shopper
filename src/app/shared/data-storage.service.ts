@@ -21,4 +21,12 @@ export class DataStorageService {
     );
   }
 
+  fetchRecipes(){
+    return this.http.get<Recipe[]>("https://shopper-6a108.firebaseio.com/recipes.json").subscribe(
+      (recipes) =>{
+        this.recipeService.setRecipes(recipes);
+      }
+    );
+  }
+
 }

@@ -48,6 +48,11 @@ export class RecipeService {
     this.publishUpdate();
   }
 
+  setRecipes(recipes : Recipe[]) {
+    this.recipes = recipes;
+    this.publishUpdate();
+  }
+
   publishUpdate(){
     this.onRecipiesChanged.next(this.recipes.slice());
   }
