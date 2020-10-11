@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -10,7 +12,8 @@ export class AuthComponent implements OnInit {
 
   isLoginMode = true;
 
-  constructor() { }
+  constructor(private authService : AuthService,
+    private spinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
   }
@@ -20,7 +23,29 @@ export class AuthComponent implements OnInit {
   }
 
   onSubmit(form : NgForm){
-    console.log(form);
+
+    if(form.invalid) {
+      return;
+    }
+
+    this.spinnerService.show();
+    const email = form.value.email;
+    const password = form.value.password;
+
+    if(this.isLoginMode) {
+
+    } else{
+      this.authService.singUp(email,password).subscribe(
+        (data) =>{
+          console.log(data);
+          this.spinnerService.hide();
+        },
+        (err) =>{
+          console.log(err);
+          this.spinnerService.hide();
+        }
+      );
+    }
     form.reset();
   }
 
