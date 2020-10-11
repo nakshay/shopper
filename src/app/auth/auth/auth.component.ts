@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { AuthService } from '../service/auth.service';
+import { Observable } from 'rxjs';
+import { AuthService, AuthResponseData } from '../service/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -11,8 +12,9 @@ import { AuthService } from '../service/auth.service';
 export class AuthComponent implements OnInit {
 
   isLoginMode = true;
+  error = null;
 
-  constructor(private authService : AuthService,
+  constructor(private authService: AuthService,
     private spinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
@@ -22,9 +24,14 @@ export class AuthComponent implements OnInit {
     this.isLoginMode = !this.isLoginMode;
   }
 
-  onSubmit(form : NgForm){
 
-    if(form.invalid) {
+
+  onSubmit(form: NgForm) {
+
+    let authObservable: Observable<AuthResponseData>;
+
+
+    if (form.invalid) {
       return;
     }
 
@@ -32,21 +39,24 @@ export class AuthComponent implements OnInit {
     const email = form.value.email;
     const password = form.value.password;
 
-    if(this.isLoginMode) {
-
-    } else{
-      this.authService.singUp(email,password).subscribe(
-        (data) =>{
-          console.log(data);
-          this.spinnerService.hide();
-        },
-        (err) =>{
-          console.log(err);
-          this.spinnerService.hide();
-        }
-      );
+    if (this.isLoginMode) {
+      authObservable = this.authService.login(email, password)
+    } else {
+      authObservable = this.authService.singUp(email, password)
     }
+
+    authObservable.subscribe(
+      (data) => {
+        console.log(data);
+        this.spinnerService.hide();
+      },
+      (errorMessage) => {
+        this.error = errorMessage;
+        this.spinnerService.hide();
+      }
+    );
     form.reset();
   }
+
 
 }
