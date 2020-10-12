@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import { AuthService, AuthResponseData } from '../service/auth.service';
@@ -14,7 +15,7 @@ export class AuthComponent implements OnInit {
   isLoginMode = true;
   error = null;
 
-  constructor(private authService: AuthService,
+  constructor(private authService: AuthService,private router: Router,
     private spinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
@@ -49,6 +50,7 @@ export class AuthComponent implements OnInit {
       (data) => {
         console.log(data);
         this.spinnerService.hide();
+        this.router.navigate(['/recipes']);
       },
       (errorMessage) => {
         this.error = errorMessage;
