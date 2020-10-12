@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError,tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -21,7 +22,7 @@ export class AuthService {
 
   user = new BehaviorSubject<User>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   singUp(email: string, password: string) {
     return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey,
@@ -82,6 +83,31 @@ export class AuthService {
   handleAuthetication(email: string, localId: string,idToken: string, expiresIn: Date ) {
     const user = new User(email,localId, idToken,expiresIn);
     this.user.next(user);
+    localStorage.setItem('userData',JSON.stringify(user));
+  }
+
+  logout(){
+    this.user.next(null);
+    localStorage.setItem('userData',null);
+    this.router.navigate(['/auth']);
+  }
+
+  autoLogin(){
+    const userData: {
+      email : string,
+      id : string,
+      _token : string,
+      _tokenExpirationDate : string
+    } =  JSON.parse(localStorage.getItem('userData'));
+    if(!userData) {
+      return;
+    }
+    const loadedUser = new User(userData.email, userData.id, 
+      userData._token, new Date(userData._tokenExpirationDate));
+
+      if(loadedUser.token) {
+        this.user.next(loadedUser);
+      }
   }
 
 }
