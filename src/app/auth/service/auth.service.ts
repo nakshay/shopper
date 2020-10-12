@@ -20,6 +20,8 @@ export interface AuthResponseData {
 })
 export class AuthService {
 
+  private tokenExpirationTimer : any;
+
   user = new BehaviorSubject<User>(null);
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -52,8 +54,7 @@ export class AuthService {
         catchError(this.handlerError), 
         tap(
           (resData =>{
-            const expiresIn = new Date(new Date().getTime() + Number(resData.expiresIn)*1000);
-            this.handleAuthetication(resData.email,resData.localId,resData.idToken,expiresIn);
+            this.handleAuthetication(resData.email,resData.localId,resData.idToken,resData.expiresIn);
           })
         )
       )
@@ -80,16 +81,22 @@ export class AuthService {
     }
   }
 
-  handleAuthetication(email: string, localId: string,idToken: string, expiresIn: Date ) {
+  handleAuthetication(email: string, localId: string,idToken: string, expirationDuration: number ) {
+    const expiresIn = new Date(new Date().getTime() + Number(expirationDuration)*1000);
     const user = new User(email,localId, idToken,expiresIn);
+    this.autoLogout(expirationDuration*1000);
     this.user.next(user);
     localStorage.setItem('userData',JSON.stringify(user));
   }
 
   logout(){
     this.user.next(null);
-    localStorage.setItem('userData',null);
+    localStorage.removeItem('userData');
     this.router.navigate(['/auth']);
+    if(this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
   }
 
   autoLogin(){
@@ -106,8 +113,17 @@ export class AuthService {
       userData._token, new Date(userData._tokenExpirationDate));
 
       if(loadedUser.token) {
+        const expireationDuration= new Date(userData._tokenExpirationDate).getTime() - 
+        new Date().getTime();
+        this.autoLogout(expireationDuration);
         this.user.next(loadedUser);
       }
+  }
+
+  autoLogout(expirationDuration: number){
+    this.tokenExpirationTimer=  setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
   }
 
 }
