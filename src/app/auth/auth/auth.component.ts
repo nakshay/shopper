@@ -48,7 +48,6 @@ export class AuthComponent implements OnInit {
 
     authObservable.subscribe(
       (data) => {
-        console.log(data);
         this.spinnerService.hide();
         this.router.navigate(['/recipes']);
       },
