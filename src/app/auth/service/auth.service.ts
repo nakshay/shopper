@@ -38,8 +38,7 @@ export class AuthService {
         ),
         tap(
           (resData =>{
-            const expiresIn = new Date(new Date().getTime() + Number(resData.expiresIn)*1000);
-            this.handleAuthetication(resData.email,resData.localId,resData.idToken,expiresIn);
+            this.handleAuthetication(resData.email,resData.localId,resData.idToken,+resData.expiresIn);
           })
         )
       );
@@ -54,7 +53,7 @@ export class AuthService {
         catchError(this.handlerError), 
         tap(
           (resData =>{
-            this.handleAuthetication(resData.email,resData.localId,resData.idToken,resData.expiresIn);
+            this.handleAuthetication(resData.email,resData.localId,resData.idToken,+resData.expiresIn);
           })
         )
       )
