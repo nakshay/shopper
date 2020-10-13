@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthComponent } from './auth/auth/auth.component';
-import { ShoppingListComponent } from './shopping-list/shopping-list.component';
-
 
 const routes: Routes = [
-  { path: "shopping-list", component: ShoppingListComponent },
+  { path: "", redirectTo: "/recipes", pathMatch:"full" },
   {path:"auth",component:AuthComponent}
 ];
 
