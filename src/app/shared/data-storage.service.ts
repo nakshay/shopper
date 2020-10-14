@@ -3,21 +3,18 @@ import { Injectable } from '@angular/core';
 import { Recipe } from '../recipes/recipe.model';
 import { RecipeService } from '../recipes/services/recipe.service';
 
-import { exhaustMap, map,take,tap } from "rxjs/operators";
-import { AuthService } from '../auth/service/auth.service';
-import { User } from '../auth/user.model';
+import { map,tap } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataStorageService {
 
-  constructor(private http: HttpClient, private recipeService : RecipeService,
-    private authService : AuthService) {}
+  constructor(private http: HttpClient, private recipeService : RecipeService) {}
 
   storeRecipe(){
     const recipes: Recipe[] = this.recipeService.getRecipes();
-    this.http.put("https://shopper-6a108.firebaseio.com/recipes.json",recipes)
+    this.http.put("https://shopper-cf67f.firebaseio.com/recipes.json",recipes)
     .subscribe(
       (res) =>{
         console.log(res);
@@ -28,7 +25,7 @@ export class DataStorageService {
   fetchRecipes() {
 
 
-    return this.http.get<Recipe[]>("https://shopper-6a108.firebaseio.com/recipes.json")
+    return this.http.get<Recipe[]>("https://shopper-cf67f.firebaseio.com/recipes.json")
       .pipe(map(
         (recipes: Recipe[]) => {
           return recipes.map(
